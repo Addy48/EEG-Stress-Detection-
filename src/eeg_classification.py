@@ -68,6 +68,32 @@ COMPARISONS = [
     ("Relax", "Stroop", "Relax-Stroop"),
 ]
 
+
+from sklearn.ensemble import VotingClassifier, BaggingClassifier, StackingClassifier
+
+ENSEMBLES = {
+    "Voting": VotingClassifier(
+        estimators=[
+            ("knn", KNeighborsClassifier(n_neighbors=5)),
+            ("rf", RandomForestClassifier(n_estimators=100, random_state=42)),
+            ("lr", LogisticRegression(max_iter=1000, random_state=42)),
+        ],
+        voting="soft"
+    ),
+    "Bagging": BaggingClassifier(
+        estimator=KNeighborsClassifier(n_neighbors=5),
+        n_estimators=10,
+        random_state=42
+    ),
+    "Stacking": StackingClassifier(
+        estimators=[
+            ("knn", KNeighborsClassifier(n_neighbors=5)),
+            ("rf", RandomForestClassifier(n_estimators=100, random_state=42)),
+        ],
+        final_estimator=LogisticRegression(max_iter=1000, random_state=42)
+    )
+}
+
 MODELS = {
     "KNN": KNeighborsClassifier(n_neighbors=5, n_jobs=-1),
     "RandomForest": RandomForestClassifier(
