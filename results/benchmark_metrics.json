@@ -1,0 +1,29 @@
+{
+  "study": "Inter-Subject Variability in EEG-Based Stress Detection",
+  "dataset": "SAM-40",
+  "sampling_rate_hz": 128,
+  "channels": 14,
+  "best_subject_dependent": {
+    "model": "KNN",
+    "average_accuracy": 97.39,
+    "arithmetic": 97.3,
+    "mirror": 97.31,
+    "stroop": 97.56
+  },
+  "best_subject_independent": {
+    "model": "AdaBoost",
+    "average_accuracy": 55.29,
+    "arithmetic": 54.07,
+    "mirror": 53.35,
+    "stroop": 58.44
+  },
+  "generalization_gap_pp": 42.1,
+  "ensemble_results": {
+    "stacking_sd": 81.25,
+    "stacking_si": 49.7,
+    "voting_sd": 77.16,
+    "voting_si": 50.41,
+    "bagging_sd": 63.15,
+    "bagging_si": 53.67
+  }
+}
