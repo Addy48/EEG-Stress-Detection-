@@ -1,0 +1,16 @@
+cff-version: 1.2.0
+title: "Inter-Subject Variability in EEG-Based Stress Detection: A Machine Learning Perspective"
+message: "If you use this codebase or benchmark, please cite the accepted manuscript as below."
+type: conference-paper
+authors:
+  - family-names: Sharma
+    given-names: Prakriti
+  - family-names: Upadhyay
+    given-names: Aaditya
+  - family-names: Jadhav
+    given-names: Akshay
+year: 2026
+conference:
+  name: "3rd International Conference on Business Intelligence, Computational Mathematics and Data Analytics (IBCD 2026)"
+status: accepted
+url: "https://github.com/Addy48/EEG-Stress-Detection-"
