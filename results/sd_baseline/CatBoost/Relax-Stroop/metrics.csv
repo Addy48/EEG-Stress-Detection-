@@ -1,0 +1,2 @@
+Model,Task,Validation,Accuracy,Precision,Recall,F1,AUC
+CatBoost,Relax-Stroop,Subject-Dependent,0.7395416666666667,0.7089503743679464,0.81275,0.7573081590105772,0.8206962843661838

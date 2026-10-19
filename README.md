@@ -1,106 +1,81 @@
-# Inter-Subject Variability in EEG-Based Stress Detection
+# EEG stress detection on SAM 40: subject-dependent vs subject-independent evaluation
 
-[![Paper: Accepted](https://img.shields.io/badge/Paper-Accepted%20(IBCD%202026)-success.svg)](#paper-and-citation)
-[![Python: 3.10+](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](requirements.txt)
-[![Code: Preserved](https://img.shields.io/badge/Code-Reproducible%20Artifact-brightgreen.svg)](#reproducibility)
+[![tests](https://github.com/Addy48/EEG-Stress-Detection-/actions/workflows/tests.yml/badge.svg)](https://github.com/Addy48/EEG-Stress-Detection-/actions/workflows/tests.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)
 
-Machine-learning benchmark and experimental pipeline investigating **EEG-based stress classification** on the SAM-40 dataset under **subject-dependent (SD)** versus **subject-independent (SI)** cross-validation regimes.
+Code and saved results for the manuscript *Inter-Subject Variability in EEG-Based Stress Detection: A Machine Learning Perspective* (Sharma, Upadhyay, Jadhav; School of Computer Science and Engineering, Manipal University Jaipur). The manuscript is under submission; this repository will link the published version when there is one.
 
-> [!NOTE]
-> **Paper Status:** Accepted for publication at the **3rd International Conference on Business Intelligence, Computational Mathematics and Data Analytics (IBCD 2026)**. Camera-ready copy submitted; proceedings publication pending. This repository contains the preserved experimental implementation, preprocessing pipelines, feature extraction, and evaluation metrics corresponding to the accepted manuscript.
+The question: how much does accuracy drop when the classifier is not allowed to see the same recording during training? Seven classical models and three ensembles are evaluated on three binary tasks from the public [SAM 40](docs/DATA.md) dataset (Relax vs Arithmetic, Mirror image, Stroop), under a subject-dependent split and a file-group (subject-independent) split.
 
-**Authors:** Prakriti Sharma, [Aaditya Upadhyay](https://github.com/Addy48), Dr. Akshay Jadhav (corresponding)  
-**Affiliation:** School of Computer Science and Engineering, Manipal University Jaipur  
-**Venue:** IBCD 2026 (Proceedings forthcoming)
+## Results at a glance
 
----
+Accuracy (%), mean over five folds and the three tasks. Full per-task tables are in [`results/TABLES.md`](results/TABLES.md).
 
-## Abstract
+| Model | Subject-dependent | File-group (SI) |
+|---|---:|---:|
+| KNN | 97.39 | 47.42 |
+| Random Forest | 92.84 | 49.70 |
+| XGBoost | 75.92 | 51.47 |
+| CatBoost | 74.62 | 52.46 |
+| AdaBoost | 63.77 | 55.29 |
+| Linear SVC | 61.38 | 50.51 |
+| Logistic Regression | 61.29 | 50.13 |
 
-EEG-based stress detection reaches high accuracy under controlled, subject-dependent evaluation. Cross-subject generalization is substantially harder. We benchmark seven classical machine learning models (KNN, Random Forest, XGBoost, CatBoost, AdaBoost, Linear SVC, Logistic Regression) and three ensemble architectures (Voting, Bagging, Stacking) on the SAM-40 dataset across three cognitive stressors: Mental Arithmetic, Mirror-Image Tracing, and the Stroop Color-Word task.
+Voting, Bagging and Stacking are in `TABLES.md`; none of them beats the best single model under SI (best ensemble 53.67%, Bagging).
 
-Subject-dependent accuracy peaks at **97.39%** (KNN) and **92.84%** (Random Forest). In contrast, subject-independent accuracy peaks at **55.29%** (AdaBoost). Complex ensembles fail to close this 42.1 percentage point generalization deficit. Our findings establish that the cross-subject bottleneck lies in individual neural variability and non-stationary feature distributions rather than model capacity.
+How to read these numbers:
 
----
+- **Subject-dependent** (SD) is a shuffled row-level split. Neighbouring time samples of the same recording land in both train and test, so it measures within-recording interpolation.
+- **File-group SI** holds out whole files, but each Relax file and task file is its own group. Matching `_sub_N` files can still end up on opposite sides of a fold, so this is **not a confirmed person-held-out estimate**. Details and the other caveats are in [`docs/PROVENANCE.md`](docs/PROVENANCE.md).
+- Each row the models see is one time sample of 32 EEG channels ([`docs/DATA.md`](docs/DATA.md)), and all results are for this one dataset.
 
-## Key Results
-
-| Model | Validation Protocol | Arithmetic Acc (%) | Mirror Acc (%) | Stroop Acc (%) | Average Acc (%) |
-|---|---|---|---|---|---|
-| **KNN** | Subject-Dependent (SD) | 97.30 | 97.31 | 97.56 | **97.39** |
-| **Random Forest** | Subject-Dependent (SD) | 93.52 | 94.40 | 90.60 | 92.84 |
-| **Stacking Ensemble**| Subject-Dependent (SD) | 80.06 | 80.14 | 83.56 | 81.25 |
-| **Voting Ensemble**  | Subject-Dependent (SD) | 76.01 | 76.58 | 78.88 | 77.16 |
-| **XGBoost** | Subject-Dependent (SD) | 75.34 | 75.11 | 77.32 | 75.92 |
-| **CatBoost** | Subject-Dependent (SD) | 71.71 | 78.19 | 73.95 | 74.62 |
-| **AdaBoost** | Subject-Independent (SI) | 54.07 | 53.35 | 58.44 | **55.29** |
-| **Bagging Ensemble** | Subject-Independent (SI) | 50.68 | 52.92 | 57.42 | 53.67 |
-| **CatBoost** | Subject-Independent (SI) | 48.81 | 52.37 | 56.20 | 52.46 |
-| **XGBoost** | Subject-Independent (SI) | 48.07 | 51.94 | 54.39 | 51.47 |
-| **Random Forest** | Subject-Independent (SI) | 46.12 | 49.62 | 53.36 | 49.70 |
-| **KNN** | Subject-Independent (SI) | 44.83 | 47.78 | 49.65 | 47.42 |
-
-**Generalization Gap:** 42.10 percentage points between SD (97.39%) and SI (55.29%).
-
----
-
-## Repository Structure
+## Repository layout
 
 ```
-├── src/
-│   ├── preprocessing.py          # Savitzky-Golay & Daubechies-2 wavelet denoising
-│   ├── feature_extraction.py     # 10 statistical & information-theoretic metrics
-│   └── eeg_classification.py     # Dual-validation (SD vs SI) training & evaluation
-├── notebooks/
-│   ├── 01_preprocessing_and_wavelets.ipynb
-│   ├── 02_feature_extraction_pipeline.ipynb
-│   └── 03_model_benchmarking_and_evaluation.ipynb
-├── results/
-│   ├── summary.csv               # Empirical metrics across all models and tasks
-│   └── benchmark_metrics.json    # Machine-readable evaluation summary
-├── tests/                        # Unit test suite verifying signal & feature pipelines
-├── docs/                         # SAM-40 acquisition and protocol specifications
-├── index.html                    # Interactive web presentation dashboard
-├── requirements.txt              # Pinned dependencies
-├── CITATION.cff                  # Citation metadata
-└── README.md
+src/eeg_stress/   data loading, the 7 baselines, SD/SI evaluation, ensembles, CLI
+notebooks/        the two notebooks that produced the saved results (outputs kept)
+results/          saved metrics, reports and confusion matrices; TABLES.md
+scripts/          build_tables.py rebuilds the tables from results/
+docs/             DATA.md (what a row is) and PROVENANCE.md (what made what, limits)
+tests/            unit tests for loading, splitting and the saved tables
 ```
 
----
+## Run it
 
-## Reproducibility Guide
-
-### 1. Environment Setup
 ```bash
 git clone https://github.com/Addy48/EEG-Stress-Detection-.git
 cd EEG-Stress-Detection-
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
+python -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt && pip install -e .
+python -m pytest -q
+python scripts/build_tables.py            # rebuild the tables from the saved results
 ```
 
-### 2. Run Test Suite
+To re-run an experiment you need the SAM 40 CSVs laid out as described in [`docs/DATA.md`](docs/DATA.md):
+
 ```bash
-python3 -m pytest
+# subject-independent (file-group) baselines for one task and two models
+eeg-stress --data-root /path/to/SAM40 --protocol si --task Relax-Arithmetic --models LogisticRegression KNN --out runs
+
+# subject-dependent
+eeg-stress --data-root /path/to/SAM40 --protocol sd --task Relax-Stroop --out runs
 ```
 
-### 3. Execute Benchmarking Pipeline
-```bash
-python3 src/eeg_classification.py --data_path /path/to/SAM40 --results_path ./results
-```
+The full seven-model run on all three tasks takes many hours (the saved Colab runs were budgeted at about six). Re-running `LogisticRegression` on Relax-Arithmetic reproduces the saved metrics file exactly.
 
----
+`--group-mode subject` groups the Relax and task files that share a `_sub_N` suffix. It assumes the suffix is a person ID, is not used for any saved result, and is there for follow-up work.
 
-## Paper and Citation
+## Data
 
-```bibtex
-@inproceedings{sharma2026eeg,
-  title={Inter-Subject Variability in EEG-Based Stress Detection: A Machine Learning Perspective},
-  author={Sharma, Prakriti and Upadhyay, Aaditya and Jadhav, Akshay},
-  booktitle={Proceedings of the 3rd International Conference on Business Intelligence, Computational Mathematics and Data Analytics (IBCD 2026)},
-  year={2026},
-  note={Accepted for publication}
-}
-```
+SAM 40 is not redistributed. Get it from the dataset paper and cite it:
 
-For questions regarding the paper or implementation, please contact the authors.
+> Ghosh, R., Deb, N., Sengupta, K., et al. SAM 40: Dataset of 40 subject EEG recordings to monitor the induced-stress while performing Stroop color-word test, arithmetic task, and mirror image recognition task. *Data in Brief* 40 (2022) 107772. [doi:10.1016/j.dib.2021.107772](https://doi.org/10.1016/j.dib.2021.107772)
+
+## Citing
+
+Please cite this repository (see [`CITATION.cff`](CITATION.cff)). Cite the manuscript once it is published.
+
+## License
+
+Code: [MIT](LICENSE). The SAM 40 dataset has its own terms.

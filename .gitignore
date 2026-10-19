@@ -1,14 +1,11 @@
 __pycache__/
 *.py[cod]
-*$py.class
-*.so
-.Python
+.pytest_cache/
 .venv/
-env/
 venv/
+*.egg-info/
 .ipynb_checkpoints/
 .DS_Store
-data/raw/
-data/processed/
-*.log
-.pytest_cache/
+# local run output and the raw dataset
+runs/
+data/

@@ -1,0 +1,2 @@
+Model,Task,Validation,Accuracy,Precision,Recall,F1,AUC
+AdaBoost,Relax-Stroop,Subject-Dependent,0.63804296875,0.6230764837471988,0.6991067708333334,0.6588217479635388,0.6912323601447211

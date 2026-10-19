@@ -1,0 +1,2 @@
+Model,Task,Validation,Accuracy,Precision,Recall,F1,AUC
+LogisticRegression,Relax-Stroop,Subject-Dependent,0.6233164062500001,0.6036310083211095,0.7182968750000001,0.6559895550617261,0.6630105353800456

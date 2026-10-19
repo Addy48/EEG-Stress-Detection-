@@ -1,16 +1,25 @@
 cff-version: 1.2.0
-title: "Inter-Subject Variability in EEG-Based Stress Detection: A Machine Learning Perspective"
-message: "If you use this codebase or benchmark, please cite the accepted manuscript as below."
-type: conference-paper
+title: "EEG-Stress-Detection: code and saved results for subject-dependent vs subject-independent stress classification on SAM40"
+message: "If you use this code or the saved results, please cite this repository."
+type: software
 authors:
-  - family-names: Sharma
-    given-names: Prakriti
   - family-names: Upadhyay
     given-names: Aaditya
+  - family-names: Sharma
+    given-names: Prakriti
   - family-names: Jadhav
     given-names: Akshay
-year: 2026
-conference:
-  name: "3rd International Conference on Business Intelligence, Computational Mathematics and Data Analytics (IBCD 2026)"
-status: accepted
-url: "https://github.com/Addy48/EEG-Stress-Detection-"
+    affiliation: "School of Computer Science and Engineering, Manipal University Jaipur"
+repository-code: "https://github.com/Addy48/EEG-Stress-Detection-"
+license: MIT
+abstract: >-
+  Seven classical classifiers and three ensemble methods evaluated on the SAM40 EEG dataset
+  (Relax versus Arithmetic, Mirror image and Stroop) with subject-dependent and
+  file-group (subject-independent) five-fold cross-validation. Companion code and saved
+  results for a manuscript under submission.
+keywords:
+  - EEG
+  - stress detection
+  - SAM40
+  - cross-validation
+  - machine learning

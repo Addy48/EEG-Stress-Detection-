@@ -1,0 +1,2 @@
+Model,Task,Accuracy,Precision,Recall,F1,AUC,Validation
+RandomForest,Relax-Mirror,0.9440442708333334,0.9228207471012737,0.9691432291666666,0.9454146606447509,0.9876068588935004,Subject-Dependent

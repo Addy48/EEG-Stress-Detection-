@@ -1,0 +1,2 @@
+Model,Task,Validation,Accuracy,Precision,Recall,F1,AUC
+XGBoost,Relax-Stroop,Subject-Dependent,0.7731875,0.735698594517326,0.85271875,0.7898973071529566,0.8597685650634764

@@ -1,0 +1,2 @@
+Model,Task,Accuracy,Precision,Recall,F1,AUC,Validation
+LogisticRegression,Relax-Mirror,0.5967239583333332,0.5811797426736208,0.6924635416666667,0.6319582221021909,0.6374427806260851,Subject-Dependent
